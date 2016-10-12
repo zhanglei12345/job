@@ -1,0 +1,9 @@
+1.显示gdb版本
+	(gdb) show version
+2.进入gdb时不显示提示信息 
+	gdb -q
+3.列出可执行文件的所有函数名称
+	(gdb) info functions
+4.默认情况下，gdb不会进入不带调试信息的函数。比如printf
+	(gdb) set step-mode on
+	gdb就不会跳过没有调试信息的函数.
