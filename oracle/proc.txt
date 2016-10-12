@@ -1,0 +1,70 @@
+1.数据库连接
+常用的连接方法有两种，一是将用户名和密码存放在两个宿主变量中，采用IDENTIFIED BY 子句：
+EXEC SQL CONNECT :username IDENTIFIED BY :password ;
+一是将用户名和密码按照“username/password”方式（在用户名和密码中用反斜线做分隔的字符串）存放在一个宿主变量中：
+EXEC SQL CONNECT :usernameandpwd;
+
+2.db_link
+drop database link ACCDTL;
+
+CREATE database link ACCDTL
+CONNECT TO dtlsedywdb IDENTIFIED BY dtlsedywdb
+USING 'KJCONDB2';
+using后面的是连接字符串，tnsnames.ora中定义远程数据库的连接串，也可以在创建dblink的时候直接指定。
+
+drop public database link GNLDTL;
+
+CREATE public database link GNLDTL
+CONNECT TO dtlyljdb IDENTIFIED BY dtlyljdb
+USING '(DESCRIPTION =
+    (ADDRESS_LIST =
+        (ADDRESS = (PROTOCOL = TCP)(HOST = 20.200.4.50)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+        (SERVICE_NAME = kjcondb02)
+    )
+)';
+一个公用数据库链接对于数据库中的所有用户都是可用的，而一个私有链接仅对创建它的用户可用。
+
+查看已创建的dblink：
+select * from dba_objects where OBJECT_TYPE = 'DATABASE LINK'; 
+
+3.如果一个应用程序中没有显示的执行 COMMIT 语句，则直到应用程序结束或者程序中存在数据库定义语言（DDL：create、alter、drop)，Oracle 才会提交数据。
+EXEC SQL COMMIT WORK RELEASE;
+其中 WORK 关键字是为了同标准 SQL 兼容，RELEASE 关键字释放应用程序的所有锁、游标等数据库资源，断开数据库连接.
+
+4.性能优化
+在 SELECT、DELETE、UPDATE 语句中可以使用明确的优化选项，以指示数据库服务器按照用户的选择进行适当的算法优化，格式是在“/*+ ...*/”中加入优化方式，例如：
+EXEC SQL SELECT /*+ ALL_ROWS (cost-based) */ empno, ename, sal, job
+INTO :emp_rec FROM emp
+WHERE deptno = :dept_number;
+
+5.动态SQL
+METHOD 1	--无宿主变量的非查询语句
+	EXEC SQL EXECUTE IMMEDIATE { :host_string | string_literal };
+	例：EXEC SQL EXECUTE IMMEDIATE "CREATE TABLE dyn1 (col1 VARCHAR2(4))";	
+		或 
+		EXEC SQL EXECUTE IMMEDIATE :dynstmt1;
+METHOD 2	--已知输入变量个数的非查询语句
+	EXEC SQL PREPARE statement_name FROM { :host_string | string_literal };
+	EXEC SQL EXECUTE statement_name [USING host_variable_list];
+	例：EXEC SQL PREPARE sql_stmt FROM :delete_stmt;
+		EXEC SQL EXECUTE sql_stmt USING :empno, :deptno1;
+	（USING 子句中如果一个是数组宿主变量，USING 子句中的宿主变量必须全是数组类型）
+METHOD 3	--已知 SELECT 语句选取列和输入宿主变量个数的查询语句
+	EXEC SQL PREPARE statement_name FROM { :host_string | string_literal };
+	EXEC SQL DECLARE cursor_name CURSOR FOR statement_name;
+	EXEC SQL OPEN cursor_name [USING host_variable_list];
+	EXEC SQL FETCH cursor_name INTO host_variable_list;
+	EXEC SQL CLOSE cursor_name;
+METHOD 4 	--未知 SELECT 语句选取列或输入宿主变量个数的查询语句，也适用于未知列名列表和输入宿主变量的其他 DML 语句，只是其他语句处理比 SELECT 查询定义游标要简单
+	一般不采用
+	
+5.Pro*C/C++提供了两种模式得到 SQL 语句的执行结果，一种是WHENEVER 语句，另一种是通过 Oracle SQL Communications Area(SQLCA)
+	EXEC SQL INCLUDE sqlca;
+	或
+	#include <sqlca.h>
+
+6.通常在 Pro*C/C++中书写 SQL 语句可以在一行较长时换行到下一行继续书写，除非上行代码的末尾同下行代码的开头是一个字符串，在这种情况下，需要使用反斜线“\”作为行连接符号。 
+
+
