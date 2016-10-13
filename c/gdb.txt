@@ -1,3 +1,22 @@
+gcc -g main.c -o main
+gdb ./main
+
+
+l:列出源代码
+b 12:在12行设置断点
+b func:在函数func处设置断点
+start:单步调试
+info break:查看断点信息
+p a:打印变量a的值
+r:运行程序，在断点处停住
+n:单条语句执行，跳到下一行
+c:继续运行程序
+s:进入函数
+bt:查看函数堆栈
+f 1:切换到1这个栈的函数
+q:退出gdb
+
+
 1.显示gdb版本
 	(gdb) show version
 2.进入gdb时不显示提示信息 
@@ -7,3 +26,35 @@
 4.默认情况下，gdb不会进入不带调试信息的函数。比如printf
 	(gdb) set step-mode on
 	gdb就不会跳过没有调试信息的函数.
+5.当单步调试一个函数时，如果不想继续跟踪下去了，可以有两种方式退出:
+	finish:函数会继续执行完，并且打印返回值.
+	return:函数不会继续执行下面的语句，而是直接返回.也可以用“return expression”命令指定函数的返回值.
+6.使用gdb调试程序时，可以使用“call”或“print”命令直接调用函数执行。
+7.在gdb中，如果要打印大数组的内容，缺省最多会显示200个元素.
+	(gdb) set print elements number-of-elements
+	设置为没有限制:(gdb) set print elements 0
+		       (gdb) set print elements unlimited
+8.打印数组中任意连续元素的值:
+	(gdb) p array[index]@num
+ 	num是连续多少个元素
+9.打印数组的索引下标:
+	(gdb) set print array-indexes on
+10.gdb中使用“x”命令来打印内存的值，格式为“x/nfu addr”。含义为以f格式打印从addr开始的n个长度单元为u的内存值。参数具体含义如下：
+	a）n：输出单元的个数。
+	b）f：是输出格式。比如x是以16进制形式输出，o是以8进制形式输出,等等。
+	c）u：标明一个单元的长度。b是一个byte，h是两个byte（halfword），w是四个byte（word），g是八个byte（giant word）。
+11.每行只会显示结构体的一名成员，而且还会根据成员的定义层次进行缩进:
+	set print pretty on
+12.
+	b -> break
+	c -> continue
+	d -> delete
+	f -> frame
+	i -> info
+	j -> jump
+	l -> list
+	n -> next
+	p -> print
+	r -> run
+	s -> step
+	u -> until
