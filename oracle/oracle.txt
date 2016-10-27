@@ -1,0 +1,34 @@
+1.
+DQL（数据查询语言）：select
+DML（数据操纵语言）：insert，update，delete
+	insert into table_name(...) values(...);
+	insert into table_name select ...;
+	update table_name set ... where ...;
+	delete from table_name where ...;(可以rollback)
+	truncate table table_name;(不可以rollback)
+TCL（事务控制语言）：commit,rollback,savepoint
+DDL（数据定义语言）：create table, alter table
+	create table table_name1 as select ... from table_name2 where ...;
+	create table table_name (column_name datatype, ...);
+	alter table table_name add column_name datatype;
+	alter table table_name modify column_name  datatype;
+	alter table table_name drop column column_name; (如果要在一条语句中删除多个列，则需要将删除的字段名放在括号中，多个字段之间用逗号隔开，这时不能使用关键字column)
+	alter table table_name rename column old_column_name to new_column_name;
+	rename old_table_name to new_table_name;
+	alter table old_table_name rename to new_table_name;
+DCL（数据控制语言）：grant,revoke
+
+2.
+	SQL*PLUS set命令
+	heading [on/off] :列标题
+	linesize  n  ：一行中显示的最多字符总数
+	pagesize n  ：设置从顶部标题至页结束之间的行数     set pagesize 0 （不进行分页显示）
+
+3.
+help index    ：查看SQL*PLUS命令清单
+#desc object_name   :在SQL*PLUS敲命令中间执行后可查看表结构，不用重新敲之前的命令
+start和@   ：执行SQL脚本文件
+rowid   ：行标识符，数据库的隐藏列，代表该行数据在oracle数据库中的物理地址
+
+4.
+having子句对group by子句选择出来的结果进行再次筛选，最后输出符合having子句中条件的记录
