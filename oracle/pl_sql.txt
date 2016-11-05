@@ -1,0 +1,119 @@
+1.
+pl/sql块结构:(每一条语句都必须要以分号结束)
+[declare]		变量，常量，游标
+begin			逻辑控制，运算
+[exception]		(when...then...)
+end
+2.
+在服务器端显示执行结果：
+set serveroutput on
+输出结算结果：
+dbms_output.put_line("hello"||c);
+3.
+代码注释：
+--或/**/
+4.
+特殊数据类型：
+%type
+	声明一个与指定列名称相同的数据类型，它通常紧跟在指定列名的后面。
+%record
+	记录类型是一种结构化的数据类型。
+	type record_type is record
+	(
+		var_member1 data_type [not null] [:=default_value],
+		...
+	);
+%rowtype
+	根据数据表中行的结构定义一种特殊的数据类型，用来存储从数据表中检索到的一行数据。
+	rowVar_name table_name%rowtype;
+5.
+<变量名> <数据类型>[(长度) :=<初始值>];
+<常量名> constant <数据类型> :=<常量值>;
+6.
+流程控制语句：
+if <condition_expression1> then
+	plsql_sentence_1;
+elseif <condition_expression2> then
+	plsql_sentence_2;
+...
+else
+	plsql_sentence_n;
+end if;
+	
+case <selector>
+	when <expression_1> then plsql_sentence_1;
+	when <expression_1> then plsql_sentence_2;
+	...
+	when <expression_1> then plsql_sentence_n;
+	[else plsql_sentence;]
+end case;
+
+loop
+	plsql_sentence;
+	exit when end_condition_exp;
+end loop；
+
+while condition_expression loop
+	plsql_sentence;
+end loop;
+
+for variable_counter_name in [reverse] lower_limit..upper_limit loop
+	plsql_sentence;
+end loop;
+
+7.
+游标：
+cursor cur_name[(input_parameter1[,input_parameter2]...)]
+[return ret_type]
+is select_sentence;
+
+input_parameter:
+	para_name [in] datatype [{:=|default} para_value]
+
+open cur_name[(para_value1[,para_value2]...)];
+
+fetch cur_name into {variable};   #变量列表或记录类型
+
+close cur_name;
+
+游标的属性：
+	cur_name%found
+	cur_name%notfound
+	cur_name%rowcount
+	cur_name%isopen
+
+隐式游标：
+	在执行一个sql语句时，oracle会自动创建一个隐式游标。
+	隐式游标主要用于处理数据操纵语句（update，delete）的执行结果。
+	sql%notfound
+
+通过for语句循环游标：
+	在使用游标的for循环中，可以声明游标，但不用进行打开游标、读取游标和关闭游标，由oracle系统自动完成
+	(1)遍历隐式游标，通过在关键字in的后面提供由select语句检索的结果集,select语句用()括起来
+	(2)遍历显式游标，通过在关键字in的后面提供游标的名称
+
+8.
+存储过程：
+create [or replace] procedure pro_name [(parameter1[,parameter2]...)] is|as
+	[inner_variable;]     --内部变量
+begin
+	pssql_sentences;
+[exception]
+	[dowith_sentences;]
+end [pro_name];
+
+参数模式：in、out、in out
+drop procedure pro_name;
+9.
+函数：
+create [or replace] function fun_name[(parameter1[,parameter2]...)] return data_type is
+	[inner_variable;]
+begin
+	pssql_sentence;
+[exception]
+	[dowith_sentences;]
+end [fun_name];
+
+由于函数必须有返回值，所以在函数主体部分（begin部分）必须使用return语句返回函数值，并且要求返回值的类型要与函数声明时的返回值类型（data_type)相同。
+drop function fun_name;
+	

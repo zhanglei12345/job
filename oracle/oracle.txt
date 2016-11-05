@@ -7,6 +7,7 @@ DML（数据操纵语言）：insert，update，delete
 	delete from table_name where ...;(可以rollback)
 	truncate table table_name;(不可以rollback)
 TCL（事务控制语言）：commit,rollback,savepoint
+	savepoint sp;    rollback to savepoint sp;    commit;
 DDL（数据定义语言）：create table, alter table
 	create table table_name1 as select ... from table_name2 where ...;
 	create table table_name (column_name datatype, ...);
@@ -16,7 +17,10 @@ DDL（数据定义语言）：create table, alter table
 	alter table table_name rename column old_column_name to new_column_name;
 	rename old_table_name to new_table_name;
 	alter table old_table_name rename to new_table_name;
+	drop table table_name [cascade constraints]; (使用参数时，不仅仅删除该表，而且所有引用这个表的视图、约束或触发器等也都被删除)
 DCL（数据控制语言）：grant,revoke
+	grant obj_privi on schema.object to user;
+	revoke obj_privi on schema.object from user cascade constraints;
 
 2.
 	SQL*PLUS set命令
@@ -26,9 +30,40 @@ DCL（数据控制语言）：grant,revoke
 
 3.
 help index    ：查看SQL*PLUS命令清单
-#desc object_name   :在SQL*PLUS敲命令中间执行后可查看表结构，不用重新敲之前的命令
+#desc object_name   :在SQL*PLUS敲命令中间执行后可查看表结构，不用重新敲之前的命令(需换行)
 start和@   ：执行SQL脚本文件
 rowid   ：行标识符，数据库的隐藏列，代表该行数据在oracle数据库中的物理地址
 
 4.
 having子句对group by子句选择出来的结果进行再次筛选，最后输出符合having子句中条件的记录
+
+5.
+多表关联查询：
+表别名:
+内连接(INNER JOIN):
+	select columns_list from table_name1 [inner] join table_name2 on join_condition;
+外连接(OUTER JOIN):
+	左外连接(left join):左边的表不加限制
+		select columes_list from table_name1 left join table_name2 on join_condition;
+	右外连接(right join):右边的表不加限制
+		select columes_list from table_name1 right join table_name2 on join_condition;
+	完全外连接(full join):
+		select columes_list from table_name1 full join table_name2 on join_condition;
+	对于外连接，也可以使用(+)来表示。(+)操作符只能用于实现左外连接和右外连接，不能用于实现完全外连接;当使用(+)操作符时，如果在where子句中包含有多个条件，则必须在所有条件中都包含(+)操作符。
+	完全外连接会执行一个完整的左外连接和右外连接查询，然后将查询结果合并，并消除重复的记录行。
+自然连接(NATURAL JOIN):
+	select columns_list form table_name1 natural join table_name2 where join_condition;
+	在使用自然连接时，不能为列指定限定词。
+交叉连接(CROSS JOIIN):
+	select columns_list form table_name1 cross join table_name2;  结果是笛卡儿积，可以通过where过滤。
+
+6.
+多表关联查询的查询效率要高于子查询。
+(一般情况下，外查询语句检索一行，子查询语句需要检索一遍数据，然后判断外查询语句的条件是否满足。)
+子查询:
+子查询必须用()括起来；子查询中不能包含order by子句.
+单行子查询:(=、>、<、>=、<=、<>)
+	单行子查询的返回结果必须是一行数据。
+多行子查询:(in、any、all)
+
+
