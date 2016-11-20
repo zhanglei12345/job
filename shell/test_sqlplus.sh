@@ -1,5 +1,3 @@
-passwd=accsedywdb
-user=accsedywdb@kjcondb2
 
 next_date=`echo "set head off;
 set pages 0;
