@@ -66,4 +66,80 @@ having子句对group by子句选择出来的结果进行再次筛选，最后输
 	单行子查询的返回结果必须是一行数据。
 多行子查询:(in、any、all)
 
+7.
+约束的类型包括非空约束、主键约束、唯一约束、外键约束、检查约束和默认约束。
+约束的存在会降低插入和更改数据的效率，系统必须确认这些数据是否满足定义的约束条件。
+非空约束：not null
+主键约束：一个表中最多只能有一个主键约束，主键约束既可以由一列组成，也可以由两个或两个以上的列组成。
+				alter table table_name add [constraint pk_name] primary key(...);
+				alter table table_name drop constraint pk_name;
+唯一性约束：唯一约束的列有值时不允许重复，但可以为空值。
+				alter table table_name add constraint uk_name unique(...);
+				alter table table_name drop constraint uk_name;
+外键约束：
+				alter table table_name add constraint fk_name foreign key(...) references departments(...);
+				alter table table_name drop constraint fk_name;
 
+8.
+将索引和对应的表分别放在不同硬盘的不同的表空间中能够提高查询的速度，因为oracle能够并行读取不同硬盘的数据，这样可以避免产生I/O冲突。
+
+9.
+视图：
+视图是一个虚拟表，它由存储的查询构成，可以将它的输出看做一个表。视图并不在数据库中存储数据值，数据库只在数据字典中存储视图的定义信息。
+通过视图修改数据时，实际上就是在修改基本表中的数据。与之相对应，改变基本表中的数据也会反映到由该表组成的视图中。
+创建视图：
+	create [ or replace ] view < view_name > [(alias [, alias ] .. .) ] 
+	as < subquery > 
+	[ with check option ] [ constraint constraint_name ] 
+	[ with read only ];
+查看视图定义：
+	select * from user_views;
+删除视图：
+	drop view < view_name >;
+
+10.
+表分区：
+范围分区（range）：
+	partition by range(acc_date)
+	(
+	    partition partition_name values less than(...) tablespace tablespace_name,
+		...
+	);
+散列分区（hash）:
+	partition by hash(acc)
+	(
+  	 	partition partition_name tablespace tablespace_name,
+	    ...
+	);
+列表分区（list）：
+	partition by list(province)
+	(
+		partition partition_name values(...),
+	    ...
+	);
+组合分区:
+	范围-范围、列表-范围、范围-散列、范围-列表、列表-列表、列表-散列
+添加表分区（add）:
+	添加的分区界限应该高于最后一个分区界限.
+	alter table table_name add partition partition_name values less than(...);
+	alter table table_name modify partition partition_name add subpartition subpartition_name values(...);
+合并表分区（coalesce）:
+	用于合并散列分区和复合分区的散列子分区.
+	alter table table_name coalesce partition;
+	alter table table_name modify partition partition_name coalesce subpartition;
+删除表分区（drop）:
+	可以从范围分区或复合分区中删除分区。但是散列分区和复合分区的散列子分区，只能通过合并来达到删除的目的。
+	alter table table_name drop partition partition_name;
+	alter table table_name drop subpartition subpartition_name;
+截断表分区（truncate）:
+	删除分区中数据，不删除分区.
+	alter table table_name truncate partition partition_name;
+	alter table table_name truncate subpartition subpartition_name;
+并入表分区（merge）:
+	将相邻的分区合并成一个分区.
+	alter table table_name merge partitions part1,part2 into partition part2;
+拆分表分区（split）:
+	将一个分区拆分成两个新分区，拆分后原来分区不再存在，不能对hash分区进行拆分.
+	alter table table_name split partition part1 at (...) into (partition part11,partition part12);
+重命名表分区（rename）：
+	alter table table_name rename partition part1 to part2;
