@@ -1,0 +1,16 @@
+curl命令 是一个利用URL规则在命令行下工作的文件传输工具。它支持文件的上传和下载，所以是综合传输工具，但按传统，习惯称curl为下载工具。作为一款强力工具，curl支持包括HTTP、HTTPS、ftp等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。
+1.curl  url
+	查看网页源码
+2.curl -o filename url
+	保存网页到指定的文件名
+  curl -O url
+	保存网页到url中默认的文件名
+3.curl -O URL1 -O URL2
+	保存多个文件到本地
+4.curl -C - -O url
+	继续下载文件
+5.curl -u ftpuser:ftppass -O url
+	ftp下载文件
+6.curl -u ftpuser:ftppass -T "{file1,file2}" ftp://ftp.testserver.com
+	往ftp服务器上传多个文件
+	

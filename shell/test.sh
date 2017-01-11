@@ -62,3 +62,6 @@ echo ${array[@]}	# 打印数组的所有元素
 echo ${!array[@]}	# 输出所有数组索引
 unset array[2]		# 移除数组中索引为2的元素
 echo ${array[@]}	# 打印数组的所有元素
+
+# $#代表后接的参数个数,$@代表所有参数,$0代表脚本名字
+# $@ treats each quoted arguments as separate arguments but $* will consider the entire set of positional parameters as a single string.
