@@ -53,6 +53,7 @@ having子句对group by子句选择出来的结果进行再次筛选，最后输
 	完全外连接会执行一个完整的左外连接和右外连接查询，然后将查询结果合并，并消除重复的记录行。
 自然连接(NATURAL JOIN):
 	select columns_list form table_name1 natural join table_name2 where join_condition;
+	自然连接强制要求表之间必须具有相同的列名称。
 	在使用自然连接时，不能为列指定限定词。
 交叉连接(CROSS JOIIN):
 	select columns_list form table_name1 cross join table_name2;  结果是笛卡儿积，可以通过where过滤。
@@ -77,7 +78,7 @@ having子句对group by子句选择出来的结果进行再次筛选，最后输
 				alter table table_name add constraint uk_name unique(...);
 				alter table table_name drop constraint uk_name;
 外键约束：
-				alter table table_name add constraint fk_name foreign key(...) references departments(...);
+				alter table table_name add constraint fk_name foreign key(...) references table_name(...);
 				alter table table_name drop constraint fk_name;
 
 8.
@@ -88,9 +89,9 @@ having子句对group by子句选择出来的结果进行再次筛选，最后输
 视图是一个虚拟表，它由存储的查询构成，可以将它的输出看做一个表。视图并不在数据库中存储数据值，数据库只在数据字典中存储视图的定义信息。
 通过视图修改数据时，实际上就是在修改基本表中的数据。与之相对应，改变基本表中的数据也会反映到由该表组成的视图中。
 创建视图：
-	create [ or replace ] view < view_name > [(alias [, alias ] .. .) ] 
-	as < subquery > 
-	[ with check option ] [ constraint constraint_name ] 
+	create [ or replace ] view < view_name > [(alias [, alias ] .. .) ]
+	as < subquery >
+	[ with check option ] [ constraint constraint_name ]
 	[ with read only ];
 查看视图定义：
 	select * from user_views;
@@ -125,6 +126,7 @@ having子句对group by子句选择出来的结果进行再次筛选，最后输
 	alter table table_name modify partition partition_name add subpartition subpartition_name values(...);
 合并表分区（coalesce）:
 	用于合并散列分区和复合分区的散列子分区.
+	在合并分区时，hash列函数将分区内容分布到一个或多个保留分区中。
 	alter table table_name coalesce partition;
 	alter table table_name modify partition partition_name coalesce subpartition;
 删除表分区（drop）:
