@@ -4,30 +4,31 @@ EXEC SQL CONNECT :username IDENTIFIED BY :password ;
 一是将用户名和密码按照“username/password”方式（在用户名和密码中用反斜线做分隔的字符串）存放在一个宿主变量中：
 EXEC SQL CONNECT :usernameandpwd;
 
-2.db_link
-drop database link ACCDTL;
+2.dblink(数据库的链接)
+当我们要跨本地数据库，访问另外一个数据库表中的数据时，本地数据库中就必须要创建远程数据库的dblink。
+drop database link db_link_name;
 
-CREATE database link ACCDTL
-CONNECT TO dtlsedywdb IDENTIFIED BY dtlsedywdb
-USING 'KJCONDB2';
+CREATE database link db_link_name
+CONNECT TO 用户名 IDENTIFIED BY 密码
+USING '实例名';
 using后面的是连接字符串，tnsnames.ora中定义远程数据库的连接串，也可以在创建dblink的时候直接指定。
 
-drop public database link GNLDTL;
+drop public database link db_link_name;
 
-CREATE public database link GNLDTL
-CONNECT TO dtlyljdb IDENTIFIED BY dtlyljdb
+CREATE public database link db_link_name
+CONNECT TO 用户名 IDENTIFIED BY 密码
 USING '(DESCRIPTION =
     (ADDRESS_LIST =
-        (ADDRESS = (PROTOCOL = TCP)(HOST = 20.200.4.50)(PORT = 1521))
+        (ADDRESS = (PROTOCOL = TCP)(HOST = xxx)(PORT = xxx))
     )
     (CONNECT_DATA =
-        (SERVICE_NAME = kjcondb02)
+        (SERVICE_NAME = xxx)
     )
 )';
 一个公用数据库链接对于数据库中的所有用户都是可用的，而一个私有链接仅对创建它的用户可用。
 
 查看已创建的dblink：
-select * from dba_objects where OBJECT_TYPE = 'DATABASE LINK'; 
+select * from dba_objects where OBJECT_TYPE = 'DATABASE LINK';
 
 3.如果一个应用程序中没有显示的执行 COMMIT 语句，则直到应用程序结束或者程序中存在数据库定义语言（DDL：create、alter、drop)，Oracle 才会提交数据。
 EXEC SQL COMMIT WORK RELEASE;
@@ -42,8 +43,8 @@ WHERE deptno = :dept_number;
 5.动态SQL
 METHOD 1	--无宿主变量的非查询语句
 	EXEC SQL EXECUTE IMMEDIATE { :host_string | string_literal };
-	例：EXEC SQL EXECUTE IMMEDIATE "CREATE TABLE dyn1 (col1 VARCHAR2(4))";	
-		或 
+	例：EXEC SQL EXECUTE IMMEDIATE "CREATE TABLE dyn1 (col1 VARCHAR2(4))";
+		或
 		EXEC SQL EXECUTE IMMEDIATE :dynstmt1;
 METHOD 2	--已知输入变量个数的非查询语句
 	EXEC SQL PREPARE statement_name FROM { :host_string | string_literal };
@@ -59,12 +60,10 @@ METHOD 3	--已知 SELECT 语句选取列和输入宿主变量个数的查询语句
 	EXEC SQL CLOSE cursor_name;
 METHOD 4 	--未知 SELECT 语句选取列或输入宿主变量个数的查询语句，也适用于未知列名列表和输入宿主变量的其他 DML 语句，只是其他语句处理比 SELECT 查询定义游标要简单
 	一般不采用
-	
+
 5.Pro*C/C++提供了两种模式得到 SQL 语句的执行结果，一种是WHENEVER 语句，另一种是通过 Oracle SQL Communications Area(SQLCA)
 	EXEC SQL INCLUDE sqlca;
 	或
 	#include <sqlca.h>
 
-6.通常在 Pro*C/C++中书写 SQL 语句可以在一行较长时换行到下一行继续书写，除非上行代码的末尾同下行代码的开头是一个字符串，在这种情况下，需要使用反斜线“\”作为行连接符号。 
-
-
+6.通常在 Pro*C/C++中书写 SQL 语句可以在一行较长时换行到下一行继续书写，除非上行代码的末尾同下行代码的开头是一个字符串，在这种情况下，需要使用反斜线“\”作为行连接符号。
