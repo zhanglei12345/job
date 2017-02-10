@@ -1,3 +1,4 @@
+/* 获取文件中用|+|分割的字段内容 */
 #include <stdio.h>
 #include <string.h>
 char src_buf[512];
@@ -21,7 +22,7 @@ int getfl(char *tmp_str)
             if(bgn != end)
                 strncpy(tmp_str,bgn,end-bgn);
             p+=end-bgn+3;
-         }         
+         }
     }
     else//拼接|-|后面的数据,文件数据以|-|结束
     {

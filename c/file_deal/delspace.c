@@ -1,14 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+//清除字符串左边的空格
 char *ltrim(char *str)
 {
     char *tmp = str;
     while(*tmp)
+	{
         if (isspace(*tmp))
             ++tmp;
         else
             break;
+	}
     //printf("%d\n",tmp);
     //printf("%d\n",str);
     if(tmp > str)
@@ -16,23 +19,27 @@ char *ltrim(char *str)
     return str;
 }
 
+//清除字符串右边的空格
 char *rtrim(char *str)
 {
     char *tmp = str;
     while(*tmp)
-	++tmp;
+		++tmp;
     --tmp;
     //printf("%d\n",tmp);
     //printf("%d\n",str);
     while(tmp >= str)
+	{
         if (isspace(*tmp))
             --tmp;
         else
             break;
+	}
     *(tmp+1)='\0';
     return str;
 }
 
+//清除字符串两边空格
 char *trim(char *str)
 {
     ltrim(str);
