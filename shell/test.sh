@@ -65,3 +65,21 @@ echo ${array[@]}	# 打印数组的所有元素
 
 # $#代表后接的参数个数,$@代表所有参数,$0代表脚本名字
 # $@ treats each quoted arguments as separate arguments but $* will consider the entire set of positional parameters as a single string.
+
+#文件权限：r:4	w:2	x:1
+
+#显示2017年2月的日历
+cal 2 2017
+#显示当月的月历
+cal
+#显示2017一整年的月历
+cal 2017
+
+#在shell命令前加反斜杠，可以忽略掉alias的指定参数
+\pwd
+
+#取得完整文件名（目录名称与文件名）的文件名
+basename /Users/zhanglei/Study/job/shell/test.sh
+
+#取得完整文件名（目录名称与文件名）的目录名称
+dirname /Users/zhanglei/Study/job/shell/test.sh
