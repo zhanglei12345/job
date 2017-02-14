@@ -1,1 +1,1 @@
-sqlldr accsedywdb/accsedywdb@KJCONDB2 control=/app/accsedyw/priv/zl/student_4.ctl log=/app/accsedyw/priv/zl/student_4.log
+sqlldr username/passwd control=/Users/zhanglei/Study/job/shell/sqlldr/student_4.ctl log=/Users/zhanglei/Study/job/shell/sqlldr/student_4.log
