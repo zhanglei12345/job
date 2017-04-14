@@ -1,6 +1,15 @@
 # 互联网协议
 
-### 模型
+### OSI标准模型
+* 应用层
+* 表示层
+* 会话层
+* 传输层
+* 网络层
+* 数据链路层
+* 物理层
+
+### 五层体系结构模型
 * 应用层
 * 传输层
 * 网络层
@@ -60,7 +69,23 @@ Unix系统把主机+端口，叫做"套接字"（socket）。
 	3. 第三次握手：客户端接收到服务端的SYN+ACK报文段后，会向服务端发送ACK确认报文段，这个报文段发送完毕后，客户端和服务端都进入ESTABLISHED状态，完成TCP三次握手。
 	
 	> 当三次握手完成后，TCP协议会为连接双方维持连接状态。为了保证数据传输成功，接收端在接收到数据包后必须发送ACK报文作为确认。如果在指定的时间内（这个时间称为重新发送超时时间），发送端没有接收到接收端的ACK报文，那么就会重发超时的数据。
+	
+	![](https://raw.githubusercontent.com/zhanglei12345/job/master/net/img/net2.jpg)
+	![](https://raw.githubusercontent.com/zhanglei12345/job/master/net/img/net3.jpg)
+	
+* **TCP和UDP的区别**：
+	1. TCP面向连接（如打电话要先拨号建立连接）;UDP是无连接的，即发送数据之前不需要建立连接；
+	2. TCP提供可靠的通信服务。也就是说，通过TCP连接传送的数据，无差错，不丢失，不重复，且按序到达;UDP则是不可靠信道，尽最大努力交付，即不保证可靠交付；
+	3. TCP面向字节流，实际上是TCP把数据看成一连串无结构的字节流;UDP是面向报文的；
+	4. TCP具有拥塞控制，UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速率降低（对实时应用很有用，如IP电话，实时视频会议等）；
+	5. 每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信；
 
-##### 参考链接
+* 路由器：工作在网络层，是能够连接不同的广域网形成更大的广域网。连接的是异构网络。根据IP地址转发。
+* 交换机：工作在数据链路层，是将以太网连接形成更大的以太网，同一个网络。根据MAC地址进行转发。
+* **TCP状态转换图**：
+![](https://raw.githubusercontent.com/zhanglei12345/job/master/net/img/net1.jpg)
+
+
+##### 参考链接：
 [阮一峰网络日志-互联网协议入门一](http://www.ruanyifeng.com/blog/2012/05/internet_protocol_suite_part_i.html)  
 [阮一峰网络日志-互联网协议入门二](http://www.ruanyifeng.com/blog/2012/06/internet_protocol_suite_part_ii.html)
