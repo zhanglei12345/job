@@ -1,3 +1,9 @@
+/**
+* Proc语言就是在标准的C语言中通过嵌入SQL语句完成对数据库操作的一种语言组织形式，
+* 为了编译成可执行程序必须经过Oracle预编译程序预编译成.c源程序，
+* 并由系统c编译器编译成可执行程序。
+*/
+
 1.数据库连接
 常用的连接方法有两种，一是将用户名和密码存放在两个宿主变量中，采用IDENTIFIED BY 子句：
 EXEC SQL CONNECT :username IDENTIFIED BY :password ;
