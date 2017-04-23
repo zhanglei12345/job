@@ -49,7 +49,8 @@ having子句对group by子句选择出来的结果进行再次筛选，最后输
 		select columes_list from table_name1 right join table_name2 on join_condition;
 	完全外连接(full join):
 		select columes_list from table_name1 full join table_name2 on join_condition;
-	对于外连接，也可以使用(+)来表示。(+)操作符只能用于实现左外连接和右外连接，不能用于实现完全外连接;当使用(+)操作符时，如果在where子句中包含有多个条件，则必须在所有条件中都包含(+)操作符。
+	对于外连接，也可以使用(+)来表示。(+)操作符只能用于实现左外连接和右外连接，不能用于实现完全外连接;(+)操作符只能出现在where子句中，当使用(+)操作符时，如果在where子句中包含有多个条件，则必须在所有条件中都包含(+)操作符。
+	用(+)来实现，这个+号可以这样理解：+表示补充，即哪个表有加号，这个表就是匹配表，所以加号写在右表，左表就是全部显示，故是左连接。
 	完全外连接会执行一个完整的左外连接和右外连接查询，然后将查询结果合并，并消除重复的记录行。
 自然连接(NATURAL JOIN):
 	select columns_list form table_name1 natural join table_name2 where join_condition;
