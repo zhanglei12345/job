@@ -2,34 +2,127 @@
 获取文件第10行:
 	sed -n '10p' file1
 	tail -n +10 file1|head -1
+
 2.
 利用正则表达式找出系统中含有某些特殊关键字的文件：
 	grep '\*' /etc/*	# /etc下面第一层子目录
 	grep '\*' $(find /etc -type f)	# 包含/etc下面的各级子目录
 	find / -type f | xargs -n 10 grep '\*'	# 让grep命令每次仅能处理10个文件名
 	find / -type f | xargs -n 10 grep -l '\*'	# 输出匹配到的文件名
+
 3.
 将/etc/passwd内容以:分隔，并以第三列来排序。
 	cat /etc/passwd | sort -t ':' -k 3 -n	# -n是使用”纯数字”进行排序（默认是以文字类型来排序的）
+
 4.
 查询每个用户的登录总次数:
 	last | cut -d ' ' -f1 |sort|uniq -c		# uniq -c 进行计数
+
 5.
 tee:同时将数据流送与文件与屏幕（stdout）
 	last | tee -a last.list | cut -d ' ' -f1	# tee -a 追加
+
 6.
 将last输出的信息中所有的小写字符变成大写字符：
 	last | tr '[a-z]' '[A-Z]'
+
 7.
 join:两个文件中指定栏位内容相同的行连接起来。
 	join -t ':' -1 4 -2 3 /etc/passwd /etc/group
 在使用join之前，所需要处理的文件应该要事先经过排序（sort）处理。
+
 8.
 paste:将文件两行贴在一起，且中间以tab键隔开。
 	cat file1 | paste file2 file3 - | head -n 3		# 将file1,file2,file3拼接起来且仅取出前三行，- 代表标准输入
+
 9.
 split:将一个大文件依据文件大小或行数来切割成为小文件。
 	split -b 10k file PREFIX	# 将文件file分成10k大小的若干文件。PREFIX代表前导符，可作为切割文件的前导文字。
 	split -l 10  file PREFIX	# 将文件file的每10行记录生成一个文件。
 将切割后的文件合成一个文件，可利用cat进行数据流重定向实现。
+
 10.
+标准输出和错误输出同时重定向到同一位置：
+	ls /usr/share/doc > out.txt 2>&1
+	ls /usr/share/doc &> out.txt
+
+11.
+#!/bin/bash
+
+12.
+通过块文本符号将段落插入到文件末尾：
+cat >> path/append.txt <<EOF
+append first-line
+append second-line
+EOF
+
+13.
+在其他目录运行一个命令，然后自动返回当前目录，只需将命令放在一个圆括号里。
+(cd path && ls -l)
+
+14.
+如果comman命令的退出状态码是0(该命令成功运行)，位于then部分的命令就会被执行。
+if command
+then
+	commands
+fi
+
+if command1
+then
+	commands
+elif command2
+then
+	more commands
+fi
+
+if test condition
+then
+	commands
+fi
+
+if [condition]
+then
+	commands
+fi
+
+15.
+case variable in
+	pattern1 | pattern2) commands1;;
+	pattern3) commands2;;
+	*) commands3;;
+esac
+
+16.
+for cat in list
+do
+	commands
+done
+
+while test command
+do
+	other commands
+done
+
+until test commands
+do
+	other commands
+done
+
+for((cariable assignment;condition;iteration process))
+do
+	commands
+done
+
+17.
+read -s -p "Enter your passwd: " pwd
+	-s (隐藏)
+可以用read命令来读取Linux系统文件里保存的数据，每次调用read命令会从文件中读取一行文本，当文件再没有内容时，read命令会退出并返回非零退出状态码。
+cat test.txt | while read line
+do
+	echo "$line"
+done
+
+18.
+清除日志文件的一个通用方法：
+	cat /dev/null > testfile
+	可以快速移除现有文件中的数据而不用先删除文件再创建。
