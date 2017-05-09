@@ -2,18 +2,39 @@ gcc -g main.c -o main
 gdb ./main
 
 
-l:列出源代码
+start:单步调试
+l:列出源代码，默认每次显示10行
+list 行号
+list 函数名
 b 12:在12行设置断点
 b func:在函数func处设置断点
-start:单步调试
 info break:查看断点信息
+delete 断点号n：删除第n个断点
+disable 断点号n：暂停第n个断点
+enable 断点号n：开启第n个断点
+clear 行号n：清除第n行的断点
+delete breakpoints：清除所有断点
 p a:打印变量a的值
 r:运行程序，在断点处停住
-n:单条语句执行，跳到下一行
+u:当你厌倦了在一个循环体内单步跟踪时，这个命令可以运行程序直到退出循环体
+n:单条语句执行，跳到下一行。
+	单步跟踪程序，当遇到函数调用时，也不进入此函数体；此命令同 step 的主要区别是，step 遇到用户自定义的函数，将步进到函数中去运行，而 next 
+	则直接调用函数，不会进入到函数体内。
 c:继续运行程序
 s:进入函数
-bt:查看函数堆栈
+display 表达式：在单步运行时将非常有用，使用display命令设置一个表达式后，它将在每次单步进行指令后，紧接着输出被设置的表达式及值。如： display a
+info locals： 打印出当前函数中所有局部变量及其值
+where/bt ：当前运行的堆栈列表
+	当程序被停住了，你需要做的第一件事就是查看程序是在哪里停住的。当你的程序调用了一个函数，函数的地址，函数参数，函数内的局部变量都会被压入“栈”（Stack）中。
+	你可以用GDB命令来查看当前的栈中的信息。
 f 1:切换到1这个栈的函数
+	一般来说，程序停止时，最顶层的栈就是当前栈，如果你要查看栈下面层的详细信息，首先要做的是切换当前栈。
+up <n> ：表示向栈的上面移动n层，可以不打n，表示向上移动一层
+down <n> ： 表示向栈的下面移动n层，可以不打n，表示向下移动一层
+info f ：打印出更为详细的当前栈层的信息
+set args 参数:指定运行时的参数
+show args：查看设置好的参数
+info program： 来查看程序的是否在运行，进程号，被暂停的原因。
 q:退出gdb
 
 
@@ -58,3 +79,55 @@ q:退出gdb
 	r -> run
 	s -> step
 	u -> until
+
+13.
+	gdb <program>			
+		program也就是你的执行文件，一般在当前目录下。
+	gdb <program> core
+		用gdb同时调试一个运行程序和core文件，core是程序非法执行后core dump后产生的文件。
+	gdb <program> <PID>
+		如果你的程序是一个服务程序，那么你可以指定这个服务程序运行时的进程ID。gdb会自动attach上去，并调试他。program应该在PATH环境变量中搜索得到。
+
+14.
+	gdb中，输入命令时，可以不用打全命令，只用打命令的前几个字符就可以了。当然，命令的前几个字符应该要标志着一个唯一的命令，
+	在Linux下，你可以敲击两次TAB键来补齐命令的全称，如果有重复的，那么gdb会把其列出来。
+
+15.
+	在gdb环境中，你可以执行UNIX的shell的命令,使用gdb的shell命令来完成：
+		shell <command string>
+	还有一个gdb命令是make,可以在gdb中执行make命令来重新build自己的程序：
+		make <make-args>
+
+16.
+	break ... if <condition>
+		condition表示条件，在条件成立时停住。比如在循环体中，可以设置break if i==100，表示当i为100时停住程序。
+
+17.
+	Core Dump:
+		当程序运行的过程中异常终止或崩溃，操作系统会将程序当时的内存状态记录下来，保存在一个文件中，这种行为就叫做Core Dump（中文有的翻译成“核心转储”)。
+	产生core dump的可能原因:
+		a)内存访问越界,比如访问数组时使用错误下标导致越界，使用strcpy, strcat, sprintf, strcmp等字符串操作函数，将目标字符串读/写爆。
+		b)多线程读写的数据未加锁保护。对于会被多个线程同时访问的全局数据，应该注意加锁保护，否则很容易造成core dump。
+		c)非法指针，比如给空指针赋值。
+	配置操作系统使其产生core文件：
+		通过ulimit -c或ulimit -a，可以查看core file大小的配置情况，如果为0，则表示系统关闭了dump core。可以通过ulimit -c unlimited （只对当前shell有效）来打开。若发生了段错误，但没有core dump，是由于系统禁止core文件的生成。
+
+18.
+	线程：
+	如果你程序是多线程的话，你可以定义你的断点是否在所有的线程上，或是在某个特定的线程。GDB很容易帮你完成这一工作。
+		break <行号> thread <线程ID>
+		break <行号> thread <线程ID> if ...
+		线程ID是GDB分配的，你可以通过“info threads”命令来查看正在运行程序中的线程信息。
+		如果你不指定thread <线程ID>则表示你的断点设在所有线程上面。
+		比如：
+		(gdb) break frik.c:13 thread 28 if bartab > lim
+		thread <线程ID> 	: 切换当前调试的线程为指定ID的线程。
+
+
+
+
+
+
+
+
+
