@@ -1,6 +1,11 @@
+/*
+	PL/SQL是一种过程化语言，在PL/SQL中可以通过IF语句或LOOP语句实现控制程序的执行流程，甚至可以定义变量，以便在语句之间传递数据信息，
+这样PL/SQL语言就能够实现操纵程序处理的细节过程。
+*/
+
 1.
 pl/sql块结构:(每一条语句都必须要以分号结束)
-[declare]		变量，常量，游标
+[declare]		声明变量，常量，游标
 begin			逻辑控制，运算
 [exception]		(when...then...)
 end
@@ -8,7 +13,7 @@ end
 在服务器端显示执行结果：
 set serveroutput on
 输出结算结果：
-dbms_output.put_line("hello"||c);
+dbms_output.put_line(‘hello’||c);
 3.
 代码注释：
 --或/**/
@@ -33,18 +38,18 @@ dbms_output.put_line("hello"||c);
 流程控制语句：
 if <condition_expression1> then
 	plsql_sentence_1;
-elseif <condition_expression2> then
+elsif <condition_expression2> then
 	plsql_sentence_2;
 ...
 else
 	plsql_sentence_n;
 end if;
-	
+
 case <selector>
 	when <expression_1> then plsql_sentence_1;
-	when <expression_1> then plsql_sentence_2;
+	when <expression_2> then plsql_sentence_2;
 	...
-	when <expression_1> then plsql_sentence_n;
+	when <expression_n> then plsql_sentence_n;
 	[else plsql_sentence;]
 end case;
 
@@ -116,4 +121,3 @@ end [fun_name];
 
 由于函数必须有返回值，所以在函数主体部分（begin部分）必须使用return语句返回函数值，并且要求返回值的类型要与函数声明时的返回值类型（data_type)相同。
 drop function fun_name;
-	
