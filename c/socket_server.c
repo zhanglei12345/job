@@ -8,12 +8,31 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 #define PORT 9001
 #define QUEUE_MAX_COUNT 5
 #define BUFF_SIZE 4096
 
 #define SERVER_STRING "Server: \r\n"
+
+void exit_handler(int sigal)
+{
+	//接受SIGCHLD信号
+	int status;
+	int pid;
+	/*
+	-1 等待任何子进程,相当于 wait()。
+	WNOHANG 若pid指定的子进程没有结束，则waitpid()函数返回0，不予以等待。若结束，则返回该子进程的ID。
+	*/
+	pid = waitpid(-1,&status,WNOHANG);
+	//WIFEXITED(status):如果子进程正常结束则为非0值.
+	if(WIFEXITED(status))
+	{
+		//取得子进程exit()返回的结束码
+		printf("The child pid:[%d] exit with code:[%d]\n",pid,WEXITSTATUS(status));
+	}
+}
 
 int main()
 {
@@ -32,6 +51,11 @@ int main()
 	char recv_buf[BUFF_SIZE];
 
 	int hello_len = 0;
+	long pid;
+
+	//回收僵尸进程
+	//子进程退出的时候，会发送SIGCHLD信号
+	signal(SIGCHLD, exit_handler);
 
 	/* 创建一个socket, 监听套接字, TCP传输协议 */
 	server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -78,8 +102,25 @@ int main()
 		printf("accept a client\n");
 
 		printf("client socket fd: %d\n", client_fd);
+		/*
+		 用fork来同时服务多个客户端，父进程专门负责监听端口，每次accept一个新的客户端连接就fork出一个子进程专门服务这个客户端。
+		 父子进程共享打开的文件描述符，因为在子进程已经用不到监听描述符，故将其关闭，而连接描述符对父进程也没价值，将其关闭.
+		 if(fork() > 0)
+		 {
+			 close(client_fd);
+			 continue;
+		 }
+		 close(server_fd);
+		 ...(子进程处理)
+		*/
+		if((pid = fork()) > 0)
+		{
+			close(client_fd);
+			continue;
+		}
 		//子进程
-		if(fork() == 0) {
+		if(pid == 0) {
+			close(server_fd);
 			//一直接收客户端socket的send操作
 			while (1) {
 				memset(recv_buf, 0, sizeof(recv_buf));
@@ -87,9 +128,12 @@ int main()
 				/* recv()返回读入的字节数。如果连接已中止，返回0。如果发生错误，返回-1 */
 				hello_len = recv(client_fd, recv_buf, BUFF_SIZE, 0);
 
+				//去除行尾的'\n'
+				recv_buf[hello_len-1] = '\0';
+
 				printf("receive [%s] len:%d\n", recv_buf, hello_len);
 
-				if (strcmp(recv_buf,"quit\n") == 0) {
+				if (strcmp(recv_buf,"quit") == 0) {
 					printf("break\n");
 					break;
 				}
@@ -105,7 +149,7 @@ int main()
 				send(client_fd, buf, strlen(buf), 0);
 				*/
 				memset(buf, 0, sizeof(buf));
-				sprintf(buf, "Hello [%d] \r\n", hello_len);
+				sprintf(buf, "Hello [%d]", hello_len);
 				if(send(client_fd, buf, strlen(buf), 0) == -1) {
 					perror("send");
 					close(client_fd);
@@ -114,10 +158,10 @@ int main()
 			}
 			/* 关闭客户端套接字 */
 			close(client_fd);
+			exit(0);
 		}
 	}
 
-	close(server_fd);
 	return 0;
 }
 
