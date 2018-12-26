@@ -1,7 +1,6 @@
 #!/bin/bash
-    #¸¶Ï¢³É±¾³Ğµ£»ã×Ü½á¹ûÎÄ¼şÉú³É
 if [ -z "$1" ]; then
-    echo "Usage:  sh(¹¤¾ßÃû)  date_in(ÈÕÆÚ)"
+    echo "Usage:  sh(å·¥å…·å)  date_in(æ—¥æœŸ)"
     exit -1
 fi
     
@@ -9,7 +8,6 @@ file_out_path="/app/intsedyw/priv/zhanglei/"
 date_in=$1
 part_num="P${date_in:0:6}"
 start_time=$(date)
-echo "¸¶Ï¢³É±¾³Ğµ£»ã×Ü½á¹ûÎÄ¼şÉú³É--·ÖÇøºÅ:[$part_num] ¿ªÊ¼!¿ªÊ¼Ê±¼ä:$start_time"
 
 sqlplus -S $INIT_USING_DBASE/$INIT_USING_DBASEPWD 2>/dev/null <<EOF
 set heading off     
@@ -28,6 +26,4 @@ EOF
 sed "s/ //g" ${file_out_path}ledger.txt.tmp > ${file_out_path}ledger.txt
 rm -f ${file_out_path}ledger.txt.tmp
 end_time=$(date)
-echo "¸¶Ï¢³É±¾³Ğµ£»ã×Ü½á¹ûÎÄ¼şÉú³É--·ÖÇøºÅ:[$part_num] Íê³É!Íê³ÉÊ±¼ä:$end_time"
-
 
