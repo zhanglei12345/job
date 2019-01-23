@@ -98,11 +98,11 @@ int main()
     json_object_object_add(my_object, "baz", json_object_new_string("bang"));
 
     /*get*/
-    json_object *get_obj = json_object_object_get(my_object,"abc");
-    printf("get_obj int =[%d]\n", json_object_get_int(get_obj));
+    json_object *get_obj_int = json_object_object_get(my_object,"abc");
+    printf("get_obj_int =[%d]\n", json_object_get_int(get_obj_int));
 
-    get_obj = json_object_object_get(my_object,"baz");
-    printf("get_obj string =[%s]\n", json_object_get_string(get_obj));
+    json_object *get_obj_str = json_object_object_get(my_object,"baz");
+    printf("get_obj_str =[%s]\n", json_object_get_string(get_obj_str));
 
     json_object *baz_obj = json_object_new_string("fark");
     /*
@@ -116,18 +116,17 @@ int main()
     json_object_object_add(my_object, "baz", baz_obj);
     json_object_object_del(my_object, "baz");
 
-	/* baz_obj should still be valid */
-	printf("baz_obj.to_string()=%s\n", json_object_to_json_string(baz_obj));
-	json_object_put(baz_obj);
-	printf("baz_obj.to_string()=%s\n", json_object_to_json_string(baz_obj));
+    /* baz_obj should still be valid */
+    printf("baz_obj.to_string()=%s\n", json_object_to_json_string(baz_obj));
+    json_object_put(baz_obj);
 
-	/*json_object_object_add(my_object, "arr", my_array);*/
-	printf("my_object=\n");
-	json_object_object_foreach(my_object, key, val)
-	{
-		printf("\t%s: %s\n", key, json_object_to_json_string(val));
-	}
-	printf("my_object.to_string()=%s\n", json_object_to_json_string(my_object));
+    /*json_object_object_add(my_object, "arr", my_array);*/
+    printf("my_object=\n");
+    json_object_object_foreach(my_object, key, val)
+    {
+        printf("\t%s: %s\n", key, json_object_to_json_string(val));
+    }
+    printf("my_object.to_string()=%s\n", json_object_to_json_string(my_object));
 
     json_object_put(my_object);
 
@@ -143,82 +142,139 @@ int main()
 
 json_object *make_array()
 {
-	json_object *my_array;
+    json_object *my_array;
 
-	my_array = json_object_new_array();
-	json_object_array_add(my_array, json_object_new_int(1));
-	json_object_array_add(my_array, json_object_new_int(2));
-	json_object_array_add(my_array, json_object_new_int(3));
-	json_object_array_put_idx(my_array, 4, json_object_new_int(5));
-	json_object_array_put_idx(my_array, 3, json_object_new_int(4));
-	json_object_array_put_idx(my_array, 6, json_object_new_int(7));
+    my_array = json_object_new_array();
+    json_object_array_add(my_array, json_object_new_int(1));
+    json_object_array_add(my_array, json_object_new_int(2));
+    json_object_array_add(my_array, json_object_new_int(3));
+    json_object_array_put_idx(my_array, 4, json_object_new_int(5));
+    json_object_array_put_idx(my_array, 3, json_object_new_int(4));
+    json_object_array_put_idx(my_array, 6, json_object_new_int(7));
 
-	return my_array;
+    return my_array;
 }
 
 void test_array_del_idx()
 {
-	int rc;
-	size_t ii;
-	size_t orig_array_len;
-	json_object *my_array;
+    int rc;
+    size_t ii;
+    size_t orig_array_len;
+    json_object *my_array;
 
-	my_array = make_array();
-	orig_array_len = json_object_array_length(my_array);
+    my_array = make_array();
+    orig_array_len = json_object_array_length(my_array);
 
-	printf("my_array=\n");
-	for(ii = 0; ii < json_object_array_length(my_array); ii++)
-	{
-		json_object *obj = json_object_array_get_idx(my_array, ii);
-		printf("\t[%d]=%s\n", (int)ii, json_object_to_json_string(obj));
-	}
-	printf("my_array.to_string()=%s\n", json_object_to_json_string(my_array));
+    printf("my_array=\n");
+    for(ii = 0; ii < json_object_array_length(my_array); ii++)
+    {
+        json_object *obj = json_object_array_get_idx(my_array, ii);
+        printf("\t[%d]=%s\n", (int)ii, json_object_to_json_string(obj));
+    }
+    printf("my_array.to_string()=%s\n", json_object_to_json_string(my_array));
 
-	for (ii = 0; ii < orig_array_len; ii++)
-	{
-		rc = json_object_array_del_idx(my_array, 0, 1);
-		printf("after del_idx(0,1)=%d, my_array.to_string()=%s\n",
-		       rc, json_object_to_json_string(my_array));
-	}
+    for (ii = 0; ii < orig_array_len; ii++)
+    {
+        rc = json_object_array_del_idx(my_array, 0, 1);
+        printf("after del_idx(0,1)=%d, my_array.to_string()=%s\n",
+                rc, json_object_to_json_string(my_array));
+    }
 
-	/* One more time, with the empty array: */
-	rc = json_object_array_del_idx(my_array, 0, 1);
-	printf("empty array after del_idx(0,1)=%d, my_array.to_string()=%s\n",
-	       rc, json_object_to_json_string(my_array));
+    /* One more time, with the empty array: */
+    rc = json_object_array_del_idx(my_array, 0, 1);
+    printf("empty array after del_idx(0,1)=%d, my_array.to_string()=%s\n",
+            rc, json_object_to_json_string(my_array));
 
-	json_object_put(my_array);
+    json_object_put(my_array);
 
-	/* Delete all array indexes at once */
-	my_array = make_array();
-	rc = json_object_array_del_idx(my_array, 0, orig_array_len);
-	printf("after del_idx(0,%d)=%d, my_array.to_string()=%s\n",
-	       (int)orig_array_len, rc, json_object_to_json_string(my_array));
+    /* Delete all array indexes at once */
+    my_array = make_array();
+    rc = json_object_array_del_idx(my_array, 0, orig_array_len);
+    printf("after del_idx(0,%d)=%d, my_array.to_string()=%s\n",
+            (int)orig_array_len, rc, json_object_to_json_string(my_array));
 
-	json_object_put(my_array);
+    json_object_put(my_array);
 
-	/* Delete *more* than all array indexes at once */
-	my_array = make_array();
-	rc = json_object_array_del_idx(my_array, 0, orig_array_len + 1);
-	printf("after del_idx(0,%d)=%d, my_array.to_string()=%s\n",
-	       (int)(orig_array_len + 1), rc, json_object_to_json_string(my_array));
+    /* Delete *more* than all array indexes at once */
+    my_array = make_array();
+    rc = json_object_array_del_idx(my_array, 0, orig_array_len + 1);
+    printf("after del_idx(0,%d)=%d, my_array.to_string()=%s\n",
+            (int)(orig_array_len + 1), rc, json_object_to_json_string(my_array));
 
-	json_object_put(my_array);
-	
-	/* Delete some array indexes, then add more */
-	my_array = make_array();
-	rc = json_object_array_del_idx(my_array, 0, orig_array_len - 1);
-	printf("after del_idx(0,%d)=%d, my_array.to_string()=%s\n",
-	       (int)(orig_array_len - 1), rc, json_object_to_json_string(my_array));
+    json_object_put(my_array);
 
-	json_object_array_add(my_array, json_object_new_string("s1"));
-	json_object_array_add(my_array, json_object_new_string("s2"));
-	json_object_array_add(my_array, json_object_new_string("s3"));
+    /* Delete some array indexes, then add more */
+    my_array = make_array();
+    rc = json_object_array_del_idx(my_array, 0, orig_array_len - 1);
+    printf("after del_idx(0,%d)=%d, my_array.to_string()=%s\n",
+            (int)(orig_array_len - 1), rc, json_object_to_json_string(my_array));
 
-	printf("after adding more entries, my_array.to_string()=%s\n",
-	       json_object_to_json_string(my_array));
-	json_object_put(my_array);
+    json_object_array_add(my_array, json_object_new_string("s1"));
+    json_object_array_add(my_array, json_object_new_string("s2"));
+    json_object_array_add(my_array, json_object_new_string("s3"));
+
+    printf("after adding more entries, my_array.to_string()=%s\n",
+            json_object_to_json_string(my_array));
+    json_object_put(my_array);
 }
 
 /*
 gcc example_json.c -I/usr/local/include/json-c -ljson-c
+*/
+
+/*输出结果：
+$ ./a.out
+my_string=[     ]
+my_string.to_string()=["\t"]
+my_string=[\]
+my_string.to_string()=["\\"]
+my_string=[/]
+my_string.to_string()=["\/"]
+my_string.to_string(NOSLASHESCAPE)=["/"]
+my_string=[/foo/bar/baz]
+my_string.to_string()=["\/foo\/bar\/baz"]
+my_string.to_string(NOSLASHESCAPE)=["/foo/bar/baz"]
+my_string=[foo]
+my_string.to_string()=["foo"]
+my_int=[9]
+my_int.to_string()=[9]
+my_array=
+        [0]=1
+        [1]=2
+        [2]=3
+        [3]=null
+        [4]=5
+my_array.to_string()=[ 1, 2, "2", null, 5 ]
+my_array=
+        [0]=1
+        [1]=2
+        [2]=3
+        [3]=4
+        [4]=5
+        [5]=null
+        [6]=7
+my_array.to_string()=[ 1, 2, 3, 4, 5, null, 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ 2, 3, 4, 5, null, 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ 3, 4, 5, null, 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ 4, 5, null, 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ 5, null, 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ null, 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ 7 ]
+after del_idx(0,1)=0, my_array.to_string()=[ ]
+empty array after del_idx(0,1)=-1, my_array.to_string()=[ ]
+after del_idx(0,7)=0, my_array.to_string()=[ ]
+after del_idx(0,8)=-1, my_array.to_string()=[ 1, 2, 3, 4, 5, null, 7 ]
+after del_idx(0,6)=0, my_array.to_string()=[ 7 ]
+after adding more entries, my_array.to_string()=[ 7, "s1", "s2", "s3" ]
+get_obj int =[456]
+get_obj string =[bang]
+baz_obj.to_string()="fark"
+baz_obj.to_string()="fark"
+my_object=
+        foo: "bar"
+        bool0: false
+        bool1: true
+        abc: 456
+my_object.to_string()={ "foo": "bar", "bool0": false, "bool1": true, "abc": 456 }
+new_json_object:  { "animals": { "dog": [ { "name": "Rufus", "age": 15 }, { "name": "Marty", "age": 13 } ] } }
 */
