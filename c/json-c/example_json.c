@@ -266,9 +266,8 @@ after del_idx(0,7)=0, my_array.to_string()=[ ]
 after del_idx(0,8)=-1, my_array.to_string()=[ 1, 2, 3, 4, 5, null, 7 ]
 after del_idx(0,6)=0, my_array.to_string()=[ 7 ]
 after adding more entries, my_array.to_string()=[ 7, "s1", "s2", "s3" ]
-get_obj int =[456]
-get_obj string =[bang]
-baz_obj.to_string()="fark"
+get_obj_int =[456]
+get_obj_str =[bang]
 baz_obj.to_string()="fark"
 my_object=
         foo: "bar"
